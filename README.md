@@ -23,7 +23,7 @@ This grunt task is meant to work in conjunction with the [angular-package-loader
 At the bottom of your `index.html` file, add the following above your `app.js` include:
 
 ```html
-<!-- angular-package app/packages/myPackage/manifest.html -->
+<!-- angular-package app/packages/myPackage -->
 <!-- end-angular-package -->
 ```
 

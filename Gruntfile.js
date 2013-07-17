@@ -28,9 +28,24 @@ module.exports = function(grunt) {
       tests: ['tmp'],
     },
 
+    copy: {
+      test: {
+        expand: true,
+        cwd: 'test/fixtures/',
+        src: '**/*',
+        dest: 'tmp/'
+      }
+    },
+
     // Unit tests.
     nodeunit: {
-      tests: ['test/*_test.js'],
+      tests: ['test/*-test.js'],
+    },
+
+    'angular-package': {
+      app: {
+        indexFile: 'tmp/index.html'
+      }
     },
 
   });
@@ -41,11 +56,12 @@ module.exports = function(grunt) {
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'angular_module', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'copy', 'angular-package', 'nodeunit']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);
