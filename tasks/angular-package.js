@@ -11,23 +11,23 @@
 var grunt = require('grunt');
 var path = require('path');
 
-var regex = /((\s*|\t*)<!--\s*angular-package\s*(\S*)\s*-->)(\n|.)*(<!--\s*end-angular-package\s*-->)/i;
+var block = /(\n([\s\t]*)<!--\s*angular-package\s*(\S*)\s*-->)(\n|.(?!<\!--\s*end-angular-package\s*-->)*)/ig;
 
 var inject = function(html) {
-  return html.replace(regex, function(match, openTag, indent, directory, content, closeTag) {
-    var scriptContents = '';
+  return html.replace(block, function(match, openTag, nl, directory, content) {
+    var scripts = '';
 
     if (!grunt.file.isDir(directory)) {
-      return grunt.fail.fatal(new Error('Couldn\'t find directory: ' + directory));
+      return grunt.fail.fatal('Couldn\'t find directory: ' + directory);
     }
 
-    grunt.file.recurse(directory, function(absPath) {
-      if (path.extname(absPath) === '.js') {
-        scriptContents += grunt.file.read(absPath) + indent;
+    grunt.file.recurse(directory, function(abs, root, subdir, file) {
+      if (path.extname(abs) === '.js') {
+        scripts += nl + '<script src="' + path.join(directory, (subdir || ''), file) + '"></script>';
       }
     });
 
-    return openTag + indent + scriptContents + closeTag;
+    return openTag + scripts + '\n';
   });
 };
 
@@ -37,7 +37,7 @@ module.exports = function(grunt) {
     var indexFile = this.options({ indexFile: 'app/index.html' }, this.data).indexFile;
 
     if (!grunt.file.exists(indexFile)) {
-      return grunt.fail.fatal(new Error('Couldn\'t find your index file: ' + indexFile));
+      return grunt.fail.fatal('Couldn\'t find your index file: ' + indexFile);
     }
 
     grunt.file.write(indexFile, inject(grunt.file.read(indexFile)));
