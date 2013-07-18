@@ -11,10 +11,10 @@
 var grunt = require('grunt');
 var path = require('path');
 
-var block = /(\n([\s\t]*)<!--\s*angular-package\s*(\S*)\s*-->)(\n|.(?!<\!--\s*end-angular-package\s*-->)*)/ig;
+var block = /(\n([\s\t]*)<!--\s*angular-package\s*(\S*)\s*-->)(\n*|.)*?(<!--\s*end-angular-package\s*-->)/ig;
 
 var inject = function(html) {
-  return html.replace(block, function(match, openTag, nl, directory, content) {
+  return html.replace(block, function(match, openTag, nl, directory, content, closeTag) {
     var scripts = '';
 
     if (!grunt.file.isDir(directory)) {
@@ -27,7 +27,7 @@ var inject = function(html) {
       }
     });
 
-    return openTag + scripts + '\n';
+    return openTag + scripts + nl + closeTag;
   });
 };
 

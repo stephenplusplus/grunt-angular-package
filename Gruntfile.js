@@ -43,8 +43,11 @@ module.exports = function(grunt) {
     },
 
     'angular-package': {
-      app: {
-        indexFile: 'tmp/index.html'
+      fresh: {
+        indexFile: 'tmp/index-fresh.html'
+      },
+      overwrite: {
+        indexFile: 'tmp/index-overwrite.html'
       }
     },
 
